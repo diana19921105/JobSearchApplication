@@ -7,6 +7,7 @@ import com.dianaszanto.jobsearchapi.service.ClientService;
 import com.dianaszanto.jobsearchapi.util.ApiKeyUtil;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,7 +20,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client register(String clientName, String email) throws ClientAlreadyExistsInDatabaseException {
+    public Client register(String clientName, String email) throws ClientAlreadyExistsInDatabaseException,
+                                                                   ConstraintViolationException {
         Optional<Client> optionalClient = clientRepository.findByEmail(email);
         if (optionalClient.isPresent()) {
             throw new ClientAlreadyExistsInDatabaseException();

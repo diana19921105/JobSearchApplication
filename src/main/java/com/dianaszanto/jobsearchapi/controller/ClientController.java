@@ -1,7 +1,6 @@
 package com.dianaszanto.jobsearchapi.controller;
 
 import com.dianaszanto.jobsearchapi.model.data.Client;
-import com.dianaszanto.jobsearchapi.model.data.ClientErrorResponseDto;
 import com.dianaszanto.jobsearchapi.model.data.ClientRequestDto;
 import com.dianaszanto.jobsearchapi.model.data.ClientSuccessResponseDto;
 import com.dianaszanto.jobsearchapi.model.exception.ClientAlreadyExistsInDatabaseException;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.ConstraintViolationException;
+
 @RestController
 @Slf4j
 public class ClientController {
@@ -25,13 +26,9 @@ public class ClientController {
     }
 
     @PostMapping("/clients")
-    public ResponseEntity<?> register(@RequestBody ClientRequestDto clientRequestDto) {
-        try {
-            Client savedClient = clientService.register(clientRequestDto.getName(), clientRequestDto.getEmail());
-            return ResponseEntity.status(HttpStatus.OK).body(new ClientSuccessResponseDto(savedClient.getApiKey()));
-        } catch (ClientAlreadyExistsInDatabaseException e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(new ClientErrorResponseDto(e.getMessage()), HttpStatus.CONFLICT);
-        }
+    public ResponseEntity<?> register(@RequestBody ClientRequestDto clientRequestDto)
+            throws ClientAlreadyExistsInDatabaseException, ConstraintViolationException {
+        Client savedClient = clientService.register(clientRequestDto.getName(), clientRequestDto.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(new ClientSuccessResponseDto(savedClient.getApiKey()));
     }
 }
