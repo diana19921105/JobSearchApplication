@@ -29,4 +29,9 @@ public class ClientServiceImpl implements ClientService {
         Client client = new Client(clientName, email, apiKey);
         return clientRepository.save(client);
     }
+
+    @Override
+    public Optional<Client> findByApiKey(UUID apiKey) {
+        return clientRepository.findByApiKey(apiKey);
+    }
 }
