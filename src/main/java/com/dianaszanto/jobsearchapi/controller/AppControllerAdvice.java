@@ -20,7 +20,7 @@ public class AppControllerAdvice {
     }
 
     @ExceptionHandler(ClientAlreadyExistsInDatabaseException.class)
-    ResponseEntity<ClientErrorResponseDto> validationExceptionHandler(ClientAlreadyExistsInDatabaseException e) {
+    ResponseEntity<ClientErrorResponseDto> clientAlreadyExistsExceptionHandler(ClientAlreadyExistsInDatabaseException e) {
         return new ResponseEntity<>(new ClientErrorResponseDto(e.getMessage()), HttpStatus.CONFLICT);
     }
 
