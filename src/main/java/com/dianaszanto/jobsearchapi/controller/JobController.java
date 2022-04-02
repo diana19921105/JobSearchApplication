@@ -1,6 +1,7 @@
 package com.dianaszanto.jobsearchapi.controller;
 
 import com.dianaszanto.jobsearchapi.model.data.Job;
+import com.dianaszanto.jobsearchapi.model.data.JobRequestDto;
 import com.dianaszanto.jobsearchapi.model.data.JobSuccessResponseDto;
 import com.dianaszanto.jobsearchapi.service.JobService;
 import com.dianaszanto.jobsearchapi.thirdparty.JobApiServiceImpl;
@@ -15,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,7 +32,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
-@Validated
 public class JobController {
     private final JobService jobService;
     private final JobApiServiceImpl jobApiService;
@@ -41,12 +42,11 @@ public class JobController {
     }
 
     @PostMapping("/positions")
-    public ResponseEntity<JobSuccessResponseDto> postPosition(@RequestParam @Size(max = 50) String title,
-                                                              @RequestParam @Size(max = 50) String location) {
+    public ResponseEntity<JobSuccessResponseDto> postPosition(@RequestBody JobRequestDto requestDto) {
         try {
-            URL url = new URL("http://localhost:8080/positions?title=" + title +
-                                                           "&location=" + location);
-            Job jobToSave = new Job(title, location, url);
+            URL url = new URL("http://localhost:8080/positions?title=" + requestDto.getTitle() +
+                              "&location=" + requestDto.getLocation());
+            Job jobToSave = new Job(requestDto.getTitle(), requestDto.getLocation(), url);
             jobService.save(jobToSave);
             return ResponseEntity.ok(new JobSuccessResponseDto(url));
         } catch (BadCredentialsException e) {

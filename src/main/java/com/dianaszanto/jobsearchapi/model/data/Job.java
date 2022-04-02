@@ -13,7 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.net.URL;
 
 @Entity
@@ -28,9 +28,11 @@ public class Job {
     private Long id;
 
     @Column(length = 50)
+    @Size(max = 50, message = "Title is too long!")
     private String title;
 
     @Column(length = 50)
+    @Size(max = 50, message = "Location is too long!")
     private String location;
 
     private URL url;
