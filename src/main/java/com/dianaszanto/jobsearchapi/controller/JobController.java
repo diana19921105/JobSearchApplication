@@ -8,7 +8,6 @@ import com.dianaszanto.jobsearchapi.thirdparty.JobSearchResult;
 import com.dianaszanto.jobsearchapi.thirdparty.Location;
 import com.dianaszanto.jobsearchapi.thirdparty.Result;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.HttpUrl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,10 +21,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Size;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,14 +44,17 @@ public class JobController {
     public ResponseEntity<JobSuccessResponseDto> postPosition(@RequestParam @Size(max = 50) String title,
                                                               @RequestParam @Size(max = 50) String location) {
         try {
-            URL url = Objects.requireNonNull(HttpUrl.parse("http://localhost:8080/positions?title=" + title +
-                                                           "&location=" + location)).url();
+            URL url = new URL("http://localhost:8080/positions?title=" + title +
+                                                           "&location=" + location);
             Job jobToSave = new Job(title, location, url);
             jobService.save(jobToSave);
             return ResponseEntity.ok(new JobSuccessResponseDto(url));
         } catch (BadCredentialsException e) {
             log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch (MalformedURLException e) {
+            log.error(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
