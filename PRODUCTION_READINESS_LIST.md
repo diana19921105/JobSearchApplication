@@ -1,0 +1,7 @@
+- unit and integration tests with proper coverage (min 80%)
+- documentation with as many details as possible
+- create deployment environments
+- set up proper logging for monitoring purposes
+- set up load balancing
+- deploy database
+- set up SSH access
