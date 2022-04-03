@@ -21,7 +21,8 @@ public class RequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException,
+                                                                    BadCredentialsException {
         String apikey = request.getHeader("x-api-key");
 
         if (apikey == null || apikey.isBlank()) {

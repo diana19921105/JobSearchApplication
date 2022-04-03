@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,7 +53,7 @@ public class JobController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         } catch (MalformedURLException e) {
             log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -62,20 +61,27 @@ public class JobController {
     public ResponseEntity<Set<Result>> getJobs(@PathVariable String country,
                                                @PathVariable Integer page,
                                                @RequestParam(required = false) @Size(max = 50) String location,
-                                               @RequestParam(required = false) @Size(max = 50) String keyword)
-            throws IOException {
+                                               @RequestParam(required = false) @Size(max = 50) String keyword) {
+        try {
+            JobSearchResult resultsFromApi;
+            resultsFromApi = jobApiService.showJobsByLocationAndKeyWord(country, page, keyword,
+                                                                        location);
 
-        JobSearchResult resultsFromApi = jobApiService.showJobsByLocationAndKeyWord(country, page, keyword,
-                                                                                    location);
+            List<Job> allByLocationAndKeywordFromDb = jobService.findAllByLocationAndKeyword(location, keyword);
+            List<Result> resultsFromDb =
+                    allByLocationAndKeywordFromDb.stream().map(j -> new Result(j.getTitle()
+                            , new Location(j.getLocation()), j.getUrl().toString())).collect(Collectors.toList());
 
-        List<Job> allByLocationAndKeywordFromDb = jobService.findAllByLocationAndKeyword(location, keyword);
-        List<Result> resultsFromDb =
-                allByLocationAndKeywordFromDb.stream().map(j -> new Result(j.getTitle()
-                        , new Location(j.getLocation()), j.getUrl().toString())).collect(Collectors.toList());
+            resultsFromApi.getResults().addAll(resultsFromDb);
 
-        resultsFromApi.getResults().addAll(resultsFromDb);
-
-        Set<Result> resultsFromApiAndDb = new HashSet<>(resultsFromApi.getResults());
-        return ResponseEntity.ok(resultsFromApiAndDb);
+            Set<Result> resultsFromApiAndDb = new HashSet<>(resultsFromApi.getResults());
+            return ResponseEntity.ok(resultsFromApiAndDb);
+        } catch (BadCredentialsException exception) {
+            log.error(exception.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, exception.getMessage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }
