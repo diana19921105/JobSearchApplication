@@ -26,7 +26,7 @@ public class AppControllerAdvice {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    ResponseEntity<JobErrorResponseDto> clientAlreadyExistsExceptionHandler(BadCredentialsException e) {
+    ResponseEntity<JobErrorResponseDto> badCredentialsExceptionHandler(BadCredentialsException e) {
         return new ResponseEntity<>(new JobErrorResponseDto(e.getMessage()), HttpStatus.FORBIDDEN);
     }
 }
