@@ -1,9 +1,11 @@
 package com.dianaszanto.jobsearchapi.controller;
 
 import com.dianaszanto.jobsearchapi.model.data.ClientErrorResponseDto;
+import com.dianaszanto.jobsearchapi.model.data.JobErrorResponseDto;
 import com.dianaszanto.jobsearchapi.model.exception.ClientAlreadyExistsInDatabaseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,5 +23,10 @@ public class AppControllerAdvice {
     @ExceptionHandler(ClientAlreadyExistsInDatabaseException.class)
     ResponseEntity<ClientErrorResponseDto> clientAlreadyExistsExceptionHandler(ClientAlreadyExistsInDatabaseException e) {
         return new ResponseEntity<>(new ClientErrorResponseDto(e.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    ResponseEntity<JobErrorResponseDto> clientAlreadyExistsExceptionHandler(BadCredentialsException e) {
+        return new ResponseEntity<>(new JobErrorResponseDto(e.getMessage()), HttpStatus.FORBIDDEN);
     }
 }

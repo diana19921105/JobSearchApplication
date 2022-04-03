@@ -7,11 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class JobErrorRequestDto {
+public class JobErrorResponseDto {
     private String status = "error";
     private String message;
 
-    public JobErrorRequestDto(String message) {
+    public JobErrorResponseDto(String message) {
         this.message = message;
     }
 }

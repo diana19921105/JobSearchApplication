@@ -9,16 +9,13 @@ import com.dianaszanto.jobsearchapi.thirdparty.JobSearchResult;
 import com.dianaszanto.jobsearchapi.thirdparty.Location;
 import com.dianaszanto.jobsearchapi.thirdparty.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Size;
 import java.io.IOException;
@@ -48,9 +45,6 @@ public class JobController {
             Job jobToSave = new Job(requestDto.getTitle(), requestDto.getLocation(), url);
             jobService.save(jobToSave);
             return ResponseEntity.ok(new JobSuccessResponseDto(url));
-        } catch (BadCredentialsException e) {
-            log.error(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         } catch (MalformedURLException e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
@@ -76,9 +70,6 @@ public class JobController {
 
             Set<Result> resultsFromApiAndDb = new HashSet<>(resultsFromApi.getResults());
             return ResponseEntity.ok(resultsFromApiAndDb);
-        } catch (BadCredentialsException exception) {
-            log.error(exception.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, exception.getMessage());
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
