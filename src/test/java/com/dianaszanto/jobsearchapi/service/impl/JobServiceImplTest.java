@@ -27,7 +27,6 @@ public class JobServiceImplTest {
     @InjectMocks
     private JobServiceImpl jobService;
 
-
     @Test
     public void save() {
         Job job = new Job();

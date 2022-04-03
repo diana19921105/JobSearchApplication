@@ -20,8 +20,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client register(String clientName, String email) throws ClientAlreadyExistsInDatabaseException,
-                                                                   ConstraintViolationException {
+    public Client register(String clientName, String email) throws
+                                                            ConstraintViolationException, ClientAlreadyExistsInDatabaseException {
 
         Optional<Client> optionalClient = clientRepository.findByEmail(email);
         if (optionalClient.isPresent()) {

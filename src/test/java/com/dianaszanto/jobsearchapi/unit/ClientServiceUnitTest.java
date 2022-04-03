@@ -2,7 +2,6 @@ package com.dianaszanto.jobsearchapi.unit;
 
 import com.dianaszanto.jobsearchapi.model.data.Client;
 import com.dianaszanto.jobsearchapi.model.exception.ClientAlreadyExistsInDatabaseException;
-import com.dianaszanto.jobsearchapi.model.exception.MissingParameterException;
 import com.dianaszanto.jobsearchapi.repository.ClientRepository;
 import com.dianaszanto.jobsearchapi.service.impl.ClientServiceImpl;
 import org.junit.Test;
@@ -30,7 +29,7 @@ public class ClientServiceUnitTest {
     private ClientServiceImpl clientService;
 
     @Test
-    public void givenFindByApiKey_whenClientExists_thenReturnValidClient() throws MissingParameterException {
+    public void givenFindByApiKey_whenClientExists_thenReturnValidClient() throws ClientAlreadyExistsInDatabaseException {
         when(clientRepository.findByEmail(getClient().getEmail())).thenReturn(Optional.empty());
         when(clientRepository.save(any())).thenReturn(Optional.of(getClient()).get());
 
@@ -42,7 +41,7 @@ public class ClientServiceUnitTest {
     }
 
     @Test(expected = ClientAlreadyExistsInDatabaseException.class)
-    public void givenRegister_whenClientAlreadyExists_thenReturnException() throws MissingParameterException {
+    public void givenRegister_whenClientAlreadyExists_thenReturnException() throws ClientAlreadyExistsInDatabaseException {
         Client client = new Client("name", "email", new UUID(1L, 2L));
         when(clientRepository.findByEmail("email")).thenReturn(Optional.of(getClient()));
 
@@ -51,15 +50,5 @@ public class ClientServiceUnitTest {
 
     private Client getClient() {
         return new Client("name", "email", new UUID(1L, 2L));
-    }
-
-    @Test(expected = MissingParameterException.class)
-    public void givenRegister_whenEmptyField_thenThrowsMissingParameterException()
-            throws MissingParameterException {
-        clientService.register(null, "email");
-        clientService.register("client", null);
-        clientService.register("client1", "email1");
-        clientService.register(null, null);
-        clientService.register("username", null);
     }
 }
