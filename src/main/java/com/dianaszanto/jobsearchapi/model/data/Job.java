@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.net.URL;
 
@@ -21,17 +21,18 @@ import java.net.URL;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "jobs")
 public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
+    @NotBlank(message = "Title can not be empty!")
     @Size(max = 50, message = "Title is too long!")
     private String title;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
+    @NotBlank(message = "Location can not be empty!")
     @Size(max = 50, message = "Location is too long!")
     private String location;
 

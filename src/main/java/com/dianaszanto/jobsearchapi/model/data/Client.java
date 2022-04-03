@@ -13,7 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -24,15 +23,16 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "clients")
 public class Client {
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
+    @NotBlank(message = "Name can not be empty!")
     @Size(max = 100, message = "Name is too long!")
     private String name;
 
     @Id
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
+    @NotBlank(message = "Email can not be empty!")
     @Pattern(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
                       + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$", message = "Email is invalid!")
     private String email;
@@ -40,6 +40,7 @@ public class Client {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Type(type="uuid-char")
+    @Column(name = "api_key")
     private UUID apiKey;
 
     @Override

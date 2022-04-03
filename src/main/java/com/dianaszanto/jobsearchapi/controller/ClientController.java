@@ -4,7 +4,6 @@ import com.dianaszanto.jobsearchapi.model.data.Client;
 import com.dianaszanto.jobsearchapi.model.data.ClientRequestDto;
 import com.dianaszanto.jobsearchapi.model.data.ClientSuccessResponseDto;
 import com.dianaszanto.jobsearchapi.model.exception.ClientAlreadyExistsInDatabaseException;
-import com.dianaszanto.jobsearchapi.model.exception.MissingParameterException;
 import com.dianaszanto.jobsearchapi.service.ClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class ClientController {
 
     @PostMapping("/clients")
     public ResponseEntity<?> register(@RequestBody ClientRequestDto clientRequestDto)
-            throws ClientAlreadyExistsInDatabaseException, ConstraintViolationException, MissingParameterException {
+            throws ClientAlreadyExistsInDatabaseException, ConstraintViolationException {
         Client savedClient = clientService.register(clientRequestDto.getName(), clientRequestDto.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(new ClientSuccessResponseDto(savedClient.getApiKey()));
     }
